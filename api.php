@@ -15,7 +15,7 @@ return $retorno;
 }
 
 /* UTILIZANDO A API XTREAM DE FORMA SIMPLES
- * Os metodos são acessados via GET ou POST apartir do envio de aluns paramêtros
+ * Os metodos são acessados via GET ou POST apartir do envio de alguns paramêtros
  *
  * Login e Senha = Obrigatorio em todas as requisições
  *
@@ -64,6 +64,8 @@ return $retorno;
  * Camada Todo EPG Full
  * api.php?op=epgfull&usuario=USUARIO&senha=SENHA
  *
+ * Chamada do Parse Converter a Lista M3U em JSON
+ * api.php?op=lista&usuario=USUARIO&senha=SENHA
  *
  * Faça as chamads através do seu navegador pela URL que você ai utilizar 
  * Exemplo: www.meudominio.com/api.php?op=epgfull&usuario=USUARIO&senha=SENHA
@@ -236,10 +238,48 @@ if($_REQUEST['op'] == 'epgfull') {
 	echo $resposta;
 }
 
+if($_REQUEST['op'] == 'lista') {
+	
+	$user = $_REQUEST['usuario'];
+	$pwd = $_REQUEST['senha'];
+	
+	$url = IP."/get.php?username=$user&password=$pwd&type=m3u_plus&output=m3u8";
+	
+	$resposta = apixtream($url);
+	
+	preg_match_all('/(?P<tag>#EXTINF:-1)|(?:(?P<prop_key>[-a-z]+)=\"(?P<prop_val>[^"]+)")|(?<something>,[^\r\n]+)|(?<url>http[^\s]+)/', $resposta, $match );
+
+	$count = count( $match[0] );
+
+	$resultados = [];
+	$index = -1;
+
+	for( $i =0; $i < $count; $i++ ){
+	    $item = $match[0][$i];
+
+	    if( !empty($match['tag'][$i])){
+
+	    ++$index;
+	    }elseif( !empty($match['prop_key'][$i])){
+
+	    $resultados[$index][$match['prop_key'][$i]] = $match['prop_val'][$i];
+	    }elseif( !empty($match['something'][$i])){
+
+	    $resultados[$index]['something'] = $item;
+	    }elseif( !empty($match['url'][$i])){
+	    
+	    $resultados[$index]['url'] = $item ;
+	    }
+	}
+
+	echo json_encode($resultados);
+	
+}
+
+
 if($_REQUEST['op'] == '') {
 	
 	echo 'API Xtream PHP 1.0';
 	
 }
-
 ?>
