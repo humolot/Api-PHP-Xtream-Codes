@@ -1,7 +1,7 @@
 # Api-PHP-Xtream-Codes
 UTILIZANDO A API XTREAM DE FORMA SIMPLES
   
-Os metodos são acessados via GET ou POST apartir do envio de aluns paramêtros
+Os metodos são acessados via GET ou POST apartir do envio de alguns paramêtros
  
   Login e Senha = Obrigatorio em todas as requisições
  
