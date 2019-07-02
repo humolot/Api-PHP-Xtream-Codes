@@ -1,7 +1,7 @@
 <?php
 
 // IP ou URL do Xtream-Codes
-define('IP','http://tv.minhalista.me:80');
+define('IP','http://www.exemplo.com:80');
 
 function apixtream($url_api){	
 $ch = curl_init();	
